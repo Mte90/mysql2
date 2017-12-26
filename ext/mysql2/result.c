@@ -601,9 +601,13 @@ static VALUE rb_mysql_result_fetch_row(VALUE self, MYSQL_FIELD * fields, const r
             val = Qnil;
           } else {
             if (month < 1 || day < 1) {
-              rb_raise(cMysql2Error, "Invalid date in field '%.*s': %s", fields[i].name_length, fields[i].name, row[i]);
-              val = Qnil;
-            } else {
+              if (day < 1) {
+                day = 1;
+              }
+              if (month < 1 ) {
+                month = 1;
+              }
+            } 
               if (seconds < MYSQL2_MIN_TIME || seconds > MYSQL2_MAX_TIME) { /* use DateTime for larger date range, does not support microseconds */
                 VALUE offset = INT2NUM(0);
                 if (args->db_timezone == intern_local) {
@@ -629,7 +633,7 @@ static VALUE rb_mysql_result_fetch_row(VALUE self, MYSQL_FIELD * fields, const r
                   }
                 }
               }
-            }
+            
           }
           break;
         }
@@ -646,11 +650,14 @@ static VALUE rb_mysql_result_fetch_row(VALUE self, MYSQL_FIELD * fields, const r
             val = Qnil;
           } else {
             if (month < 1 || day < 1) {
-              rb_raise(cMysql2Error, "Invalid date in field '%.*s': %s", fields[i].name_length, fields[i].name, row[i]);
-              val = Qnil;
-            } else {
+              if (day < 1) {
+                day = 1;
+              }
+              if (month < 1 ) {
+                month = 1;
+              }
+            } 
               val = rb_funcall(cDate, intern_new, 3, UINT2NUM(year), UINT2NUM(month), UINT2NUM(day));
-            }
           }
           break;
         }
